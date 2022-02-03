@@ -1,0 +1,59 @@
+solver:
+  cifar10_train_daq
+
+data:
+ num_workers: 4
+ pin_memory: False
+ data_path: ../../data/cifar10/
+
+model:
+  name: 'resnet20'
+  params:
+    num_classes: 10
+  pretrain:
+    pretrained: True
+    dir: '../../models/cifar10_fp.pth'
+  quant_func: "DAQConv2d"
+  quant_params:
+    bits: 1
+    wgt_sigma: 1
+    wgt_temp: 2
+    act_sigma: 2
+    act_temp: 2
+    quant_wgt: True
+    quant_act: True
+
+train:
+  dir: "./output"
+  batch_size: 256
+  num_epochs: 400
+  model_dir: '_daq_W1A1_220127'
+  save_model_frequency: 1
+
+eval:
+  batch_size: 100
+
+scheduler:
+  name: 'cosine'
+  params:
+    T_max: 400
+    eta_min: 0
+
+optimizer:
+  name: sgd
+  params:
+    lr: 0.1
+    weight_decay: 0.0001
+
+q_optimizer:
+  name: adam
+  params:
+    lr: 0.0001
+    weight_decay: 0.0
+
+loss:
+  name: 'cross_entropy'
+  params:
+    reduction: 'mean'
+
+gpu: 0
